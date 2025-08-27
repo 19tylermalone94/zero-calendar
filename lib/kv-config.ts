@@ -1,42 +1,35 @@
-import { createClient } from "@vercel/kv"
+import { createClient } from "redis"
 
-
-const KV_REST_API_URL = process.env.KV_REST_API_URL
-const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN
-
+const REDIS_URL = process.env.REDIS_URL
 
 export const kv = createClient({
-  url: KV_REST_API_URL,
-  token: KV_REST_API_TOKEN,
+  url: REDIS_URL,
 })
 
+// Connect to Redis
+kv.connect().catch(console.error)
 
 export async function testKvConnection() {
   try {
-
     await kv.set("test_connection", "working")
     const result = await kv.get("test_connection")
 
     return {
       success: true,
-      message: "KV connection successful",
+      message: "Redis connection successful",
       result,
       environmentVariables: {
-        KV_REST_API_URL: KV_REST_API_URL ? "Set (value hidden)" : "Not set",
-        KV_REST_API_TOKEN: KV_REST_API_TOKEN ? "Set (value hidden)" : "Not set",
-
+        REDIS_URL: REDIS_URL ? "Set (value hidden)" : "Not set",
         NODE_ENV: process.env.NODE_ENV,
       },
     }
   } catch (error) {
     return {
       success: false,
-      message: "KV connection failed",
+      message: "Redis connection failed",
       error: error instanceof Error ? error.message : "Unknown error",
       environmentVariables: {
-        KV_REST_API_URL: KV_REST_API_URL ? "Set (value hidden)" : "Not set",
-        KV_REST_API_TOKEN: KV_REST_API_TOKEN ? "Set (value hidden)" : "Not set",
-
+        REDIS_URL: REDIS_URL ? "Set (value hidden)" : "Not set",
         NODE_ENV: process.env.NODE_ENV,
       },
     }

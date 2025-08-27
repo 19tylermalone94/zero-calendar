@@ -1,13 +1,10 @@
-import { createClient } from "@vercel/kv"
+import { createClient } from "redis"
 
-
-const KV_REST_API_URL = "YOUR_KV_REST_API_URL"
-// This is the token for the KV REST API. You can find it in your Vercel dashboard under the KV settings.
-const KV_REST_API_TOKEN = "YOUR_KV_REST_API_TOKEN"
-
-
+const REDIS_URL = process.env.REDIS_URL
 
 export const calendarKv = createClient({
-  url: KV_REST_API_URL,
-  token: KV_REST_API_TOKEN,
+  url: REDIS_URL,
 })
+
+// Connect to Redis
+calendarKv.connect().catch(console.error)
